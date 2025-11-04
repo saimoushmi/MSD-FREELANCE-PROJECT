@@ -1,10 +1,10 @@
 import { useLocation } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
 import { Briefcase, DollarSign, Star, TrendingUp, Clock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
@@ -15,11 +15,22 @@ export default function Dashboard() {
     return null;
   }
 
+  const sidebarStyle = {
+    "--sidebar-width": "16rem",
+    "--sidebar-width-icon": "3rem",
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
-      <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
+    <SidebarProvider style={sidebarStyle as React.CSSProperties}>
+      <div className="flex h-screen w-full">
+        <AppSidebar />
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <header className="flex items-center gap-4 border-b p-4">
+            <SidebarTrigger data-testid="button-sidebar-toggle" />
+            <h1 className="text-xl font-semibold">Dashboard</h1>
+          </header>
+          
+          <main className="flex-1 overflow-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-6">
           <div>
             <h1 className="text-3xl font-bold mb-2">Welcome back, {user.fullName}!</h1>
@@ -180,8 +191,8 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
-
-      <Footer />
-    </div>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }

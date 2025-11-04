@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { MapPin, Mail, DollarSign, Clock, Briefcase, Building2, Globe, Calendar } from 'lucide-react';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
+import { MapPin, Mail, DollarSign, Clock, Briefcase, Building2, Globe } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 
 export default function Profile() {
   const [, setLocation] = useLocation();
@@ -26,11 +26,23 @@ export default function Profile() {
       .slice(0, 2);
   };
 
+  const sidebarStyle = {
+    "--sidebar-width": "16rem",
+    "--sidebar-width-icon": "3rem",
+  };
+
   if (user.role === 'freelancer') {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
+      <SidebarProvider style={sidebarStyle as React.CSSProperties}>
+        <div className="flex h-screen w-full">
+          <AppSidebar />
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <header className="flex items-center gap-4 border-b p-4">
+              <SidebarTrigger data-testid="button-sidebar-toggle" />
+              <h1 className="text-xl font-semibold">My Profile</h1>
+            </header>
+            
+            <main className="flex-1 overflow-auto py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto space-y-6">
             <Card>
               <CardContent className="p-6">
@@ -132,15 +144,23 @@ export default function Profile() {
             )}
           </div>
         </main>
-        <Footer />
-      </div>
+          </div>
+        </div>
+      </SidebarProvider>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
+    <SidebarProvider style={sidebarStyle as React.CSSProperties}>
+      <div className="flex h-screen w-full">
+        <AppSidebar />
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <header className="flex items-center gap-4 border-b p-4">
+            <SidebarTrigger data-testid="button-sidebar-toggle" />
+            <h1 className="text-xl font-semibold">My Profile</h1>
+          </header>
+          
+          <main className="flex-1 overflow-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto space-y-6">
           <Card>
             <CardContent className="p-6">
@@ -214,7 +234,9 @@ export default function Profile() {
           )}
         </div>
       </main>
-      <Footer />
-    </div>
-  );
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
 }

@@ -58,6 +58,7 @@ export default function Signup() {
       availability: freelancerData.availability,
     };
 
+    localStorage.setItem('freelanceconnect_password', freelancerData.password);
     login(profile);
     toast({
       title: 'Account created!',
@@ -80,6 +81,7 @@ export default function Signup() {
       website: clientData.website,
     };
 
+    localStorage.setItem('freelanceconnect_password', clientData.password);
     login(profile);
     toast({
       title: 'Account created!',

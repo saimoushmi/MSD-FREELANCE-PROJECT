@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
 import { useAuth, type FreelancerProfile, type ClientProfile } from '@/contexts/AuthContext';
-import Navbar from '@/components/Navbar';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ProfileEdit() {
@@ -120,11 +121,23 @@ export default function ProfileEdit() {
     setLocation('/profile');
   };
 
+  const sidebarStyle = {
+    "--sidebar-width": "16rem",
+    "--sidebar-width-icon": "3rem",
+  };
+
   if (user.role === 'freelancer') {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <div className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
+      <SidebarProvider style={sidebarStyle as React.CSSProperties}>
+        <div className="flex h-screen w-full">
+          <AppSidebar />
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <header className="flex items-center gap-4 border-b p-4">
+              <SidebarTrigger data-testid="button-sidebar-toggle" />
+              <h1 className="text-xl font-semibold">Edit Profile</h1>
+            </header>
+            
+            <main className="flex-1 overflow-auto py-8 px-4 sm:px-6 lg:px-8">
           <Card className="max-w-2xl mx-auto">
             <CardHeader>
               <CardTitle>Edit Freelancer Profile</CardTitle>
@@ -247,15 +260,24 @@ export default function ProfileEdit() {
               </form>
             </CardContent>
           </Card>
+        </main>
+          </div>
         </div>
-      </div>
+      </SidebarProvider>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <div className="flex-1 py-8 px-4 sm:px-6 lg:px-8">
+    <SidebarProvider style={sidebarStyle as React.CSSProperties}>
+      <div className="flex h-screen w-full">
+        <AppSidebar />
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <header className="flex items-center gap-4 border-b p-4">
+            <SidebarTrigger data-testid="button-sidebar-toggle" />
+            <h1 className="text-xl font-semibold">Edit Profile</h1>
+          </header>
+          
+          <main className="flex-1 overflow-auto py-8 px-4 sm:px-6 lg:px-8">
         <Card className="max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle>Edit Client Profile</CardTitle>
@@ -355,7 +377,10 @@ export default function ProfileEdit() {
             </form>
           </CardContent>
         </Card>
-      </div>
-    </div>
-  );
+      </main>
+          </div>
+        </div>
+      </SidebarProvider>
+    );
+  }
 }

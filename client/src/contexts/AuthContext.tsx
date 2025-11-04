@@ -32,6 +32,7 @@ export type UserProfile = FreelancerProfile | ClientProfile;
 interface AuthContextType {
   user: UserProfile | null;
   login: (profile: UserProfile) => void;
+  loginWithCredentials: (email: string, password: string) => boolean;
   logout: () => void;
   updateProfile: (profile: UserProfile) => void;
   isAuthenticated: boolean;
@@ -54,6 +55,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('freelanceconnect_user', JSON.stringify(profile));
   };
 
+  const loginWithCredentials = (email: string, password: string): boolean => {
+    const savedUser = localStorage.getItem('freelanceconnect_user');
+    const savedPassword = localStorage.getItem('freelanceconnect_password');
+    
+    if (savedUser && savedPassword) {
+      const userProfile = JSON.parse(savedUser);
+      if (userProfile.email === email && savedPassword === password) {
+        setUser(userProfile);
+        return true;
+      }
+    }
+    return false;
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('freelanceconnect_user');
@@ -65,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateProfile, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, loginWithCredentials, logout, updateProfile, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

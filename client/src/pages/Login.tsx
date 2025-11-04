@@ -6,19 +6,33 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Navbar from '@/components/Navbar';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Login() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { loginWithCredentials } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: 'Demo Mode',
-      description: 'Please use the Sign Up flow to create an account.',
-    });
+    
+    const success = loginWithCredentials(email, password);
+    
+    if (success) {
+      toast({
+        title: 'Welcome back!',
+        description: 'You have successfully logged in.',
+      });
+      setLocation('/dashboard');
+    } else {
+      toast({
+        title: 'Login failed',
+        description: 'Invalid email or password. Please try again or sign up for a new account.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
