@@ -63,7 +63,7 @@ export default function Signup() {
       title: 'Account created!',
       description: 'Your freelancer profile has been created successfully.',
     });
-    setLocation('/profile');
+    setLocation('/dashboard');
   };
 
   const handleClientSubmit = (e: React.FormEvent) => {
@@ -85,7 +85,7 @@ export default function Signup() {
       title: 'Account created!',
       description: 'Your client account has been created successfully.',
     });
-    setLocation('/profile');
+    setLocation('/dashboard');
   };
 
   if (!role) {
