@@ -15,23 +15,48 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
-    const success = loginWithCredentials(email, password);
+    // Basic validation
+    if (!email || !password) {
+      setError('Please enter both email and password');
+      return;
+    }
     
-    if (success) {
+    setIsLoading(true);
+    
+    try {
+      const success = loginWithCredentials(email, password);
+      
+      if (success) {
+        toast({
+          title: 'Welcome back!',
+          description: 'You have successfully logged in.',
+        });
+        setLocation('/dashboard');
+      } else {
+        setError('Invalid email or password');
+        toast({
+          title: 'Login failed',
+          description: 'Invalid email or password. Please try again or sign up for a new account.',
+          variant: 'destructive',
+        });
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('An error occurred during login. Please try again.');
       toast({
-        title: 'Welcome back!',
-        description: 'You have successfully logged in.',
-      });
-      setLocation('/dashboard');
-    } else {
-      toast({
-        title: 'Login failed',
-        description: 'Invalid email or password. Please try again or sign up for a new account.',
+        title: 'Error',
+        description: 'An error occurred during login. Please try again.',
         variant: 'destructive',
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,8 +94,16 @@ export default function Login() {
                   data-testid="input-password"
                 />
               </div>
-              <Button type="submit" className="w-full" data-testid="button-login">
-                Log In
+              {error && (
+                <div className="text-sm text-red-500 mb-2">{error}</div>
+              )}
+              <Button 
+                type="submit" 
+                className="w-full" 
+                data-testid="button-login"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Logging in...' : 'Log In'}
               </Button>
             </form>
           </CardContent>

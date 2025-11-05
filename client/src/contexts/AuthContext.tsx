@@ -31,7 +31,7 @@ export type UserProfile = FreelancerProfile | ClientProfile;
 
 interface AuthContextType {
   user: UserProfile | null;
-  login: (profile: UserProfile) => void;
+  login: (profile: UserProfile, email: string, password: string) => void;
   loginWithCredentials: (email: string, password: string) => boolean;
   logout: () => void;
   updateProfile: (profile: UserProfile) => void;
@@ -46,22 +46,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const savedUser = localStorage.getItem('freelanceconnect_user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        const userProfile = JSON.parse(savedUser);
+        setUser(userProfile);
+      } catch (error) {
+        console.error('Failed to parse user data', error);
+        localStorage.removeItem('freelanceconnect_user');
+        localStorage.removeItem('freelanceconnect_email');
+        localStorage.removeItem('freelanceconnect_password');
+      }
     }
   }, []);
 
-  const login = (profile: UserProfile) => {
+  const login = (profile: UserProfile, email: string, password: string) => {
     setUser(profile);
     localStorage.setItem('freelanceconnect_user', JSON.stringify(profile));
+    localStorage.setItem('freelanceconnect_email', email);
+    localStorage.setItem('freelanceconnect_password', password);
   };
 
   const loginWithCredentials = (email: string, password: string): boolean => {
     const savedUser = localStorage.getItem('freelanceconnect_user');
+    const savedEmail = localStorage.getItem('freelanceconnect_email');
     const savedPassword = localStorage.getItem('freelanceconnect_password');
     
-    if (savedUser && savedPassword) {
-      const userProfile = JSON.parse(savedUser);
-      if (userProfile.email === email && savedPassword === password) {
+    if (savedUser && savedPassword && savedEmail) {
+      if (savedEmail === email && savedPassword === password) {
+        const userProfile = JSON.parse(savedUser);
         setUser(userProfile);
         return true;
       }
@@ -72,6 +83,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('freelanceconnect_user');
+    localStorage.removeItem('freelanceconnect_email');
+    localStorage.removeItem('freelanceconnect_password');
   };
 
   const updateProfile = (profile: UserProfile) => {
