@@ -1,13 +1,15 @@
-// ✅ Add these lines at the very top
-import path from "path";
+// ✅ MUST be at the very top - before ANY other imports
 import { fileURLToPath } from "url";
+import path from "path";
 
-// emulate __dirname and __filename for ESM builds
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// -----------------------------------------------------------
-// existing imports
+// Make __dirname available globally for the bundled code
+globalThis.__dirname = __dirname;
+globalThis.__filename = __filename;
+
+// Now import everything else
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
