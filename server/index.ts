@@ -16,17 +16,19 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-declare module 'http' {
+declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;
   }
 }
 
-app.use(express.json({
-  verify: (req, _res, buf) => {
-    req.rawBody = buf;
-  }
-}));
+app.use(
+  express.json({
+    verify: (req, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
 app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
@@ -70,22 +72,25 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // ✅ Setup Vite in development mode only
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-const port = parseInt(process.env.PORT || '5000', 10);
-const host = process.env.RENDER ? "0.0.0.0" : "127.0.0.1";
+  // ✅ Use Render's dynamic port (0.0.0.0) or local port (127.0.0.1)
+  const port = parseInt(process.env.PORT || "5000", 10);
+  const host = process.env.RENDER ? "0.0.0.0" : "127.0.0.1";
 
-server.listen(
-  {
-    port,
-    host,
-    reusePort: false,
-  },
-  () => {
-    log(`🚀 Server running on http://${host}:${port}`);
-  }
-);
+  server.listen(
+    {
+      port,
+      host,
+      reusePort: false,
+    },
+    () => {
+      log(`🚀 Server running on http://${host}:${port}`);
+    }
+  );
+})(); // ✅ closes the async IIFE
