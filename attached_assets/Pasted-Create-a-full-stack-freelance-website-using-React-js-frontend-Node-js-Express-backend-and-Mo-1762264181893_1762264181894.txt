@@ -1,0 +1,112 @@
+Create a full-stack freelance website using React.js (frontend), Node.js + Express (backend), and MongoDB (database).
+The system should have two types of users — Freelancers and Clients — with role-based dashboards, separate feature sets, and a connected backend and frontend through REST APIs.
+
+⚙️ Project Overview
+
+Frontend: React.js
+
+Backend: Node.js + Express
+
+Database: MongoDB
+
+Communication: Use REST API to connect frontend and backend
+
+Authentication: JWT (JSON Web Token)
+
+Authorization: Role-based access (Freelancer or Client)
+
+Payment Pages: Dummy (for design only, no real transactions)
+
+🔐 Authentication & Role Management
+
+Both freelancers and clients can register, log in, and log out.
+
+During registration, users must select their role: Freelancer or Client.
+
+Store user credentials and role in MongoDB.
+
+Use JWT tokens to authenticate users after login.
+
+When the user logs in:
+
+If the role = freelancer, redirect to the Freelancer Dashboard.
+
+If the role = client, redirect to the Client Dashboard.
+
+Store the token and role in localStorage (frontend).
+
+Only allow access to routes and data relevant to that role.
+
+👨‍💻 Freelancer Side Features
+
+When logged in as a freelancer, show only the following pages and functions:
+
+Dashboard – Summary of jobs, proposals, and activity.
+
+Browse Jobs – Fetch job listings from the backend (posted by clients).
+
+My Proposals – List proposals submitted by the freelancer.
+
+Earnings Page – Display total earnings and dummy payment history.
+
+Messages / Chat – Chat section between freelancer and client.
+
+Profile Settings – Edit skills, experience, and portfolio.
+
+All freelancer data (jobs, proposals, etc.) should come from backend APIs.
+
+👩‍💼 Client Side Features
+
+When logged in as a client, show only the following pages and functions:
+
+Dashboard – Overview of posted jobs and current freelancers.
+
+Post a Job – Form to create new jobs (send data to backend).
+
+Manage Freelancers – View and manage hired freelancers.
+
+View Proposals – Get proposals submitted by freelancers.
+
+Messages / Chat – Send messages to freelancers.
+
+Profile Settings – Update client info.
+
+Payment Page (Dummy) – Placeholder payment section (no real gateway).
+
+All job and proposal operations should connect to backend routes.
+
+🔗 Frontend–Backend Connection
+
+The frontend (React) and backend (Node.js) should communicate using REST APIs:
+
+Use axios or fetch for API requests.
+
+Base URL example: http://localhost:5000/api
+
+Backend endpoints for:
+
+/auth/register
+
+/auth/login
+
+/freelancer/jobs
+
+/freelancer/proposals
+
+/client/post-job
+
+/client/view-proposals
+
+Secure routes using JWT verification.
+
+Use middleware in backend to check if the user has the right role before accessing specific data.
+
+When the frontend runs (npm start), it should be able to:
+
+Log in users through the backend.
+
+Fetch job lists from backend to display on the frontend.
+
+Submit forms (like post a job or proposal) to the backend.
+
+Display role-specific data dynamically.
