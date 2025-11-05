@@ -5,9 +5,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx server/index.ts",
-    "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build --outDir dist/public",
-    "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js --loader:.node=copy",
+    "prebuild": "echo '=== Starting Build ===' && echo 'Current directory:' && pwd && echo 'Files in root:' && ls -la",
+    "build": "npm run build:client && npm run build:server && npm run postbuild",
+    "build:client": "echo '=== Building Client ===' && vite build --outDir dist/public",
+    "build:server": "echo '=== Building Server ===' && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js --loader:.node=copy --log-level=verbose",
+    "postbuild": "echo '=== Build Complete ===' && echo 'dist/ contents:' && ls -laR dist/ && echo '=== Checking dist/index.js ===' && if [ -f dist/index.js ]; then echo 'SUCCESS: dist/index.js exists'; ls -lh dist/index.js; else echo 'ERROR: dist/index.js not found!'; exit 1; fi",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push"
