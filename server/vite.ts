@@ -1,14 +1,49 @@
+// vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { fileURLToPath } from "url";
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+
+// Define __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default defineConfig({
+  plugins: [react(), runtimeErrorOverlay()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "client", "src"),
+      "@shared": path.resolve(__dirname, "shared"),
+      "@assets": path.resolve(__dirname, "attached_assets"),
+    },
+  },
+  root: path.resolve(__dirname, "client"),
+  build: {
+    // outDir is relative to root (client/), so we go up one level then into dist/public
+    outDir: path.resolve(__dirname, "client", "..", "dist", "public"),
+    emptyOutDir: true,
+  },
+  server: {
+    fs: {
+      strict: true,
+      deny: ["**/.*"],
+    },
+  },
+});
+
+// ===== server/vite.ts =====
 import express, { type Express } from "express";
 import fs from "fs";
-import path from "path";
+import path2 from "path";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
-import { fileURLToPath } from 'url';
+import { fileURLToPath as fileURLToPath2 } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename2 = fileURLToPath2(import.meta.url);
+const __dirname2 = path2.dirname(__filename2);
 
 const viteLogger = createLogger();
 
@@ -49,8 +84,8 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
-      const clientTemplate = path.resolve(
-        __dirname,
+      const clientTemplate = path2.resolve(
+        __dirname2,
         "..",
         "client",
         "index.html",
@@ -71,7 +106,7 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "public");
+  const distPath = path2.resolve(__dirname2, "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
@@ -82,6 +117,6 @@ export function serveStatic(app: Express) {
   app.use(express.static(distPath));
 
   app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+    res.sendFile(path2.resolve(distPath, "index.html"));
   });
 }

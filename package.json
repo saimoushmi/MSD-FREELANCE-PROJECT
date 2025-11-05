@@ -7,7 +7,7 @@
   "dev": "cross-env NODE_ENV=development tsx server/index.ts",
   "prebuild": "node -e \"console.log('=== Starting Build ==='); console.log('Current directory:', process.cwd());\"",
   "build": "npm run build:client && npm run build:server && npm run postbuild",
-  "build:client": "echo Building client... && vite build --outDir dist/public",
+  "build:client": "echo Building client... && vite build",
   "build:server": "echo Building server... && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js --loader:.node=copy --log-level=verbose",
   "postbuild": "node -e \"console.log('=== Build Complete ==='); const fs=require('fs'); if(fs.existsSync('dist/index.js')){console.log('SUCCESS: dist/index.js exists');} else {console.error('ERROR: dist/index.js not found!'); process.exit(1);} \"",
   "start": "cross-env NODE_ENV=production node dist/index.js",
