@@ -66,18 +66,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithCredentials = (email: string, password: string): boolean => {
-    const savedUser = localStorage.getItem('freelanceconnect_user');
-    const savedEmail = localStorage.getItem('freelanceconnect_email');
-    const savedPassword = localStorage.getItem('freelanceconnect_password');
-    
-    if (savedUser && savedPassword && savedEmail) {
-      if (savedEmail === email && savedPassword === password) {
+    try {
+      console.log('Attempting login with:', { email });
+      const savedUser = localStorage.getItem('freelanceconnect_user');
+      const savedEmail = localStorage.getItem('freelanceconnect_email');
+      const savedPassword = localStorage.getItem('freelanceconnect_password');
+      
+      console.log('Saved data from localStorage:', { 
+        hasSavedUser: !!savedUser,
+        hasSavedEmail: !!savedEmail,
+        hasSavedPassword: !!savedPassword
+      });
+      
+      if (!savedUser || !savedEmail || !savedPassword) {
+        console.error('Missing user data in localStorage');
+        return false;
+      }
+      
+      if (savedEmail.trim().toLowerCase() !== email.trim().toLowerCase()) {
+        console.error('Email does not match:', { 
+          inputEmail: email, 
+          savedEmail: savedEmail 
+        });
+        return false;
+      }
+      
+      if (savedPassword !== password) {
+        console.error('Password does not match');
+        return false;
+      }
+      
+      try {
         const userProfile = JSON.parse(savedUser);
+        console.log('Login successful, user profile:', userProfile);
         setUser(userProfile);
         return true;
+      } catch (parseError) {
+        console.error('Error parsing user data:', parseError);
+        return false;
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {

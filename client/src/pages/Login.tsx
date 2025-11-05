@@ -17,10 +17,12 @@ export default function Login() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [debugInfo, setDebugInfo] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setDebugInfo('');
     
     // Basic validation
     if (!email || !password) {
@@ -31,7 +33,9 @@ export default function Login() {
     setIsLoading(true);
     
     try {
+      console.log('Login attempt started');
       const success = loginWithCredentials(email, password);
+      console.log('Login result:', success);
       
       if (success) {
         toast({
@@ -40,7 +44,23 @@ export default function Login() {
         });
         setLocation('/dashboard');
       } else {
-        setError('Invalid email or password');
+        // Check what's in localStorage to help debug
+        const savedUser = localStorage.getItem('freelanceconnect_user');
+        const savedEmail = localStorage.getItem('freelanceconnect_email');
+        const savedPassword = localStorage.getItem('freelanceconnect_password');
+        
+        console.log('Login failed. Current localStorage state:', {
+          hasUser: !!savedUser,
+          savedEmail: savedEmail,
+          hasPassword: !!savedPassword
+        });
+        
+        setError('Login failed. Please check your credentials and try again.');
+        setDebugInfo(
+          `Debug info: ${savedEmail ? 'User exists' : 'No user found'} | ` +
+          `Email match: ${savedEmail === email ? 'Yes' : 'No'}`
+        );
+        
         toast({
           title: 'Login failed',
           description: 'Invalid email or password. Please try again or sign up for a new account.',
@@ -50,6 +70,7 @@ export default function Login() {
     } catch (err) {
       console.error('Login error:', err);
       setError('An error occurred during login. Please try again.');
+      setDebugInfo(`Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
       toast({
         title: 'Error',
         description: 'An error occurred during login. Please try again.',
@@ -95,7 +116,17 @@ export default function Login() {
                 />
               </div>
               {error && (
-                <div className="text-sm text-red-500 mb-2">{error}</div>
+                <div className="space-y-2 mb-4">
+                  <div className="text-sm text-red-500">{error}</div>
+                  {debugInfo && (
+                    <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
+                      {debugInfo}
+                    </div>
+                  )}
+                  <div className="text-xs text-muted-foreground">
+                    Forgot your password? <a href="/reset-password" className="text-primary hover:underline">Reset it here</a>
+                  </div>
+                </div>
               )}
               <Button 
                 type="submit" 
