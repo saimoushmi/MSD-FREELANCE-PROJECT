@@ -11,27 +11,68 @@ export default function Home() {
       <Navbar />
       
       <main className="flex-1">
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 to-background">
-          <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-              Find the Perfect Freelancer<br />
-              <span className="text-primary">Or Your Next Project</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Connect with top talent or showcase your skills. FreelanceConnect makes hiring and getting hired simple.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link href="/signup">
-                <Button size="lg" data-testid="button-get-started">
-                  Get Started
-                </Button>
-              </Link>
-              <Link href="/browse">
-                <Button size="lg" variant="outline" data-testid="button-browse-talent">
-                  Browse Talent
-                </Button>
-              </Link>
+        <section className="relative py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 to-background overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0 -z-10">
+            <img 
+              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80"
+              alt="Professional team collaborating"
+              className="w-full h-full object-cover opacity-10"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+                <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  FreelanceConnect
+                </span>
+              </h1>
+              <p className="text-2xl sm:text-3xl font-medium text-foreground mb-8">
+                Where Talent Meets Opportunity
+              </p>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
+                The best platform for freelancers to showcase their skills and for clients to find the perfect match for their projects.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <Link href="/signup">
+                  <Button size="lg" className="px-8 py-6 text-lg">
+                    Join Now - It's Free
+                  </Button>
+                </Link>
+                <Link href="/browse">
+                  <Button size="lg" variant="outline" className="px-8 py-6 text-lg">
+                    Browse Projects
+                  </Button>
+                </Link>
+              </div>
+              
+              {/* Stats */}
+              <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <div className="bg-background p-6 rounded-xl shadow-sm border">
+                  <p className="text-3xl font-bold text-primary">10K+</p>
+                  <p className="text-sm text-muted-foreground">Freelancers</p>
+                </div>
+                <div className="bg-background p-6 rounded-xl shadow-sm border">
+                  <p className="text-3xl font-bold text-primary">5K+</p>
+                  <p className="text-sm text-muted-foreground">Projects</p>
+                </div>
+                <div className="bg-background p-6 rounded-xl shadow-sm border">
+                  <p className="text-3xl font-bold text-primary">95%</p>
+                  <p className="text-sm text-muted-foreground">Success Rate</p>
+                </div>
+                <div className="bg-background p-6 rounded-xl shadow-sm border">
+                  <p className="text-3xl font-bold text-primary">24/7</p>
+                  <p className="text-sm text-muted-foreground">Support</p>
+                </div>
+              </div>
             </div>
+          </div>
+          
+          {/* Decorative elements */}
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-primary/5 to-transparent blur-3xl"></div>
           </div>
         </section>
 
