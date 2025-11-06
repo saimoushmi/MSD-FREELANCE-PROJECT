@@ -59,52 +59,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = (profile: UserProfile, email: string, password: string) => {
+    // Generate a unique key for this user
+    const userKey = `freelanceconnect_user_${email.toLowerCase()}`;
+    const passwordKey = `freelanceconnect_password_${email.toLowerCase()}`;
+    
+    // Save user profile with email as part of the key
     setUser(profile);
+    localStorage.setItem(userKey, JSON.stringify(profile));
+    
+    // Store password (in a real app, this should be a hashed password)
+    localStorage.setItem(passwordKey, password);
+    
+    // For backward compatibility, also save the current user in the old format
     localStorage.setItem('freelanceconnect_user', JSON.stringify(profile));
     localStorage.setItem('freelanceconnect_email', email);
-    localStorage.setItem('freelanceconnect_password', password);
   };
 
   const loginWithCredentials = (email: string, password: string): boolean => {
     try {
       console.log('Attempting login with:', { email });
-      const savedUser = localStorage.getItem('freelanceconnect_user');
-      const savedEmail = localStorage.getItem('freelanceconnect_email');
-      const savedPassword = localStorage.getItem('freelanceconnect_password');
       
-      console.log('Saved data from localStorage:', { 
-        hasSavedUser: !!savedUser,
-        hasSavedEmail: !!savedEmail,
-        hasSavedPassword: !!savedPassword
-      });
+      // Get all keys from localStorage that match our pattern
+      const allKeys = Object.keys(localStorage);
+      const userKeys = allKeys.filter(key => key.startsWith('freelanceconnect_user_'));
       
-      if (!savedUser || !savedEmail || !savedPassword) {
-        console.error('Missing user data in localStorage');
-        return false;
+      // Try to find a user with matching email (case-insensitive)
+      for (const userKey of userKeys) {
+        try {
+          const userData = localStorage.getItem(userKey);
+          if (!userData) continue;
+          
+          const userProfile = JSON.parse(userData);
+          const userEmail = userProfile.email;
+          
+          if (userEmail && userEmail.trim().toLowerCase() === email.trim().toLowerCase()) {
+            // Found a user with matching email
+            const passwordKey = `freelanceconnect_password_${userEmail.toLowerCase()}`;
+            const savedPassword = localStorage.getItem(passwordKey);
+            
+            if (savedPassword === password) {
+              // Password matches - login successful
+              console.log('Login successful, user profile:', userProfile);
+              setUser(userProfile);
+              return true;
+            } else {
+              console.error('Password does not match for email:', email);
+              return false;
+            }
+          }
+        } catch (error) {
+          console.error('Error processing user data:', error);
+          // Continue checking other users if there's an error with this one
+          continue;
+        }
       }
       
-      if (savedEmail.trim().toLowerCase() !== email.trim().toLowerCase()) {
-        console.error('Email does not match:', { 
-          inputEmail: email, 
-          savedEmail: savedEmail 
-        });
-        return false;
-      }
-      
-      if (savedPassword !== password) {
-        console.error('Password does not match');
-        return false;
-      }
-      
-      try {
-        const userProfile = JSON.parse(savedUser);
-        console.log('Login successful, user profile:', userProfile);
-        setUser(userProfile);
-        return true;
-      } catch (parseError) {
-        console.error('Error parsing user data:', parseError);
-        return false;
-      }
+      console.error('No user found with email:', email);
+      return false;
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -112,14 +123,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    setUser(null);
+    if (user && user.email) {
+      // Remove the specific user's data
+      const userKey = `freelanceconnect_user_${user.email.toLowerCase()}`;
+      const passwordKey = `freelanceconnect_password_${user.email.toLowerCase()}`;
+      
+      localStorage.removeItem(userKey);
+      localStorage.removeItem(passwordKey);
+    }
+    
+    // Also clean up the old format data
     localStorage.removeItem('freelanceconnect_user');
     localStorage.removeItem('freelanceconnect_email');
-    localStorage.removeItem('freelanceconnect_password');
+    
+    // Remove all password entries (for backward compatibility)
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('freelanceconnect_password')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
+    setUser(null);
   };
 
   const updateProfile = (profile: UserProfile) => {
     setUser(profile);
+    
+    // Update the user data in localStorage
+    if (profile.email) {
+      const userKey = `freelanceconnect_user_${profile.email.toLowerCase()}`;
+      localStorage.setItem(userKey, JSON.stringify(profile));
+    }
+    
+    // Also update the old format for backward compatibility
     localStorage.setItem('freelanceconnect_user', JSON.stringify(profile));
   };
 

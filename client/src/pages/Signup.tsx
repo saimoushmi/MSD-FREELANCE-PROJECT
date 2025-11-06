@@ -59,6 +59,14 @@ export default function Signup() {
     };
 
     login(profile, freelancerData.email, freelancerData.password);
+    
+    // Save additional user data to localStorage
+    const userKey = `freelanceconnect_user_${freelancerData.email.toLowerCase()}`;
+    const passwordKey = `freelanceconnect_password_${freelancerData.email.toLowerCase()}`;
+    
+    localStorage.setItem(userKey, JSON.stringify(profile));
+    localStorage.setItem(passwordKey, freelancerData.password);
+    
     toast({
       title: 'Account created!',
       description: 'Your freelancer profile has been created successfully.',
@@ -81,6 +89,14 @@ export default function Signup() {
     };
 
     login(profile, clientData.email, clientData.password);
+    
+    // Save additional user data to localStorage
+    const userKey = `freelanceconnect_user_${clientData.email.toLowerCase()}`;
+    const passwordKey = `freelanceconnect_password_${clientData.email.toLowerCase()}`;
+    
+    localStorage.setItem(userKey, JSON.stringify(profile));
+    localStorage.setItem(passwordKey, clientData.password);
+    
     toast({
       title: 'Account created!',
       description: 'Your client account has been created successfully.',

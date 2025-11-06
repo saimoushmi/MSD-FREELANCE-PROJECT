@@ -33,7 +33,48 @@ export default function Login() {
     setIsLoading(true);
     
     try {
-      console.log('Login attempt started');
+      console.log('Login attempt started for email:', email);
+      
+      // Get all user keys from localStorage
+      const allKeys = Object.keys(localStorage);
+      const userKeys = allKeys.filter(key => key.startsWith('freelanceconnect_user_'));
+      
+      console.log('Found user keys in localStorage:', userKeys);
+      
+      // Try to find a user with matching email (case-insensitive)
+      const normalizedEmail = email.trim().toLowerCase();
+      let foundUser = null;
+      
+      for (const userKey of userKeys) {
+        try {
+          const userData = localStorage.getItem(userKey);
+          if (!userData) continue;
+          
+          const userProfile = JSON.parse(userData);
+          const userEmail = userProfile?.email?.toLowerCase();
+          
+          if (userEmail === normalizedEmail) {
+            foundUser = userProfile;
+            break;
+          }
+        } catch (err) {
+          console.error('Error processing user data:', err);
+          continue;
+        }
+      }
+      
+      if (!foundUser) {
+        console.error('No user found with email:', email);
+        setError('No account found with this email. Please sign up first.');
+        toast({
+          title: 'Login failed',
+          description: 'No account found with this email. Please sign up first.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      // Now try to log in with the found user
       const success = loginWithCredentials(email, password);
       console.log('Login result:', success);
       
@@ -44,26 +85,20 @@ export default function Login() {
         });
         setLocation('/dashboard');
       } else {
-        // Check what's in localStorage to help debug
-        const savedUser = localStorage.getItem('freelanceconnect_user');
-        const savedEmail = localStorage.getItem('freelanceconnect_email');
-        const savedPassword = localStorage.getItem('freelanceconnect_password');
+        // Check if password might be the issue
+        const passwordKey = `freelanceconnect_password_${normalizedEmail}`;
+        const savedPassword = localStorage.getItem(passwordKey);
         
-        console.log('Login failed. Current localStorage state:', {
-          hasUser: !!savedUser,
-          savedEmail: savedEmail,
-          hasPassword: !!savedPassword
+        console.log('Login failed. Password check:', {
+          inputPassword: password,
+          savedPassword: savedPassword ? '***' : 'not found',
+          passwordMatch: savedPassword === password
         });
         
-        setError('Login failed. Please check your credentials and try again.');
-        setDebugInfo(
-          `Debug info: ${savedEmail ? 'User exists' : 'No user found'} | ` +
-          `Email match: ${savedEmail === email ? 'Yes' : 'No'}`
-        );
-        
+        setError('Invalid email or password. Please try again.');
         toast({
           title: 'Login failed',
-          description: 'Invalid email or password. Please try again or sign up for a new account.',
+          description: 'Invalid email or password. Please try again.',
           variant: 'destructive',
         });
       }
